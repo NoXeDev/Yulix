@@ -1,5 +1,4 @@
 #include <core/gfx.h>
-#include <core/mcu.h>
 #include <pxi.h>
 
 /*void Screen::init()

@@ -9,7 +9,8 @@ extern "C" void arm9fwmain()
     PXI_Reset();
 
     // Power on backlight and wifi led
-    MCU::wifiLED(true);
+    MCU mcuManager = MCU();
+    mcuManager.wifiLED(true);
 
     // Wait for ARM11 to be ready
     PXI_WaitRemote(PXI_READY);

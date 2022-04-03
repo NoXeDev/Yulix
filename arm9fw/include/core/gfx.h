@@ -2,15 +2,19 @@
 
 #include <types.h>
 #include <screenDefinitions.h>
+#include <core/mcu.h>
 
 class Screen
 {
     public:
-        static void init();
-        static void clear();
-        static void swap();
-        static void shutdown();
-        static void fillcolor(screens screenType, u32 color);
+        void init();
+        void clear();
+        void swap();
+        void shutdown();
+        void fillcolor(screens screenType, u32 color);
+
+    private:
+        MCU *mcuManager;
 };
 
 class GFX 

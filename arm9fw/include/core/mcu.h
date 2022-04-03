@@ -4,7 +4,11 @@
 class MCU 
 {
     public:
-        static void powerOff();
-        static void wifiLED(bool isOn);
-        static void backlightScreen(bool isOn);
+        MCU();
+        void powerOff();
+        void wifiLED(bool isOn);
+        void backlightScreen(bool isOn);
+
+    private:
+        I2C comMcu;
 };

@@ -1,6 +1,7 @@
 #include <core/mcu.h>
 
-I2C comMcu = I2C(I2C_DEV_MCU);
+MCU::MCU() : comMcu(I2C(I2C_DEV_MCU))
+{}
 
 void MCU::powerOff()
 {
