@@ -1,0 +1,9 @@
+# Build ====
+*.bin
+*.elf
+build
+*.firm
+*.map
+
+# Editor ====
+.vscode
