@@ -6,5 +6,8 @@
     <li>ARM11 : GPU driver implementation : OK</li>
     <li>ARM9 : abstract ARM11 screen cmd (via PXI) : OK ; and implement draws functions</li>
     <li>ARM9 : SoC info / abstraction implementation (for fetch SoC info for exemple isNew3DS)</li>
+    <li>ARM9 : Download SDMMC drivers</li>
+    <li>ARM9 : Download FatFS drivers and connect it to SDMMC driver</li>
+    <li>ARM9 : Create Bootloader class and start the boot process</li>
     <li>Lets see after ...</li>
 </ol>
