@@ -10,6 +10,7 @@
 #define IRQ_PXI_SYNC (12)
 #else
 #define PXI_BASE_REG    (0x10163000)
+#define IRQ_PXI_RX   (83)
 #define IRQ_PXI_SYNC (80)
 #endif
 
@@ -68,17 +69,7 @@ static inline u8 PXI_GetRemote(void)
 
 static inline void PXI_WaitRemote(u8 msg)
 {
-    while(pxi_regs->PXI_SYNC_RECV != msg);
-}
-
-static inline void PXI_EnableIRQ(void)
-{
-    pxi_regs->PXI_IRQs_REGISTER = PXI_SYNC_ENABLE_IRQ;
-}
-
-static inline void PXI_DisableIRQ(void)
-{
-    pxi_regs->PXI_IRQs_REGISTER = PXI_SYNC_DISABLE_IRQ;
+    while(PXI_GetRemote() != msg);
 }
 
 static inline void PXI_Sync(void)
@@ -92,18 +83,13 @@ static inline void PXI_Sync(void)
 
 static void PXI_Reset(void)
 {
-    pxi_regs->PXI_SYNC_RECV = 0;
-    pxi_regs->PXI_SYNC_SEND = 0;
-    pxi_regs->PXI_UNKNOWN_REGISTER = 0;
     pxi_regs->PXI_IRQs_REGISTER = 0;
-
     pxi_regs->PXI_CNT = PXI_CNT_SEND_FIFO_CLEAR | PXI_CNT_ENABLE_FIFO;
     for (int i=0; i<PXI_FIFO_LEN; i++) {
         pxi_regs->PXI_RECV;
     }
     pxi_regs->PXI_CNT = 0;
-    pxi_regs->PXI_CNT = PXI_CNT_RECV_FIFO_NOT_EMPTY_IRQ | PXI_CNT_ENABLE_FIFO | PXI_CNT_ERROR_ACK;
-    return;
+    pxi_regs->PXI_CNT = PXI_CNT_RECV_FIFO_NOT_EMPTY_IRQ | PXI_CNT_ENABLE_FIFO;
 }
 
 static inline void PXI_Send(u32 w)
@@ -114,11 +100,8 @@ static inline void PXI_Send(u32 w)
 
 static inline u32 PXI_Recv(void)
 {
-    u32 ret;
     while(pxi_regs->PXI_CNT & PXI_CNT_RECV_FIFO_EMPTY);
-    ret = pxi_regs->PXI_RECV;
-
-    return ret;
+    return pxi_regs->PXI_RECV;
 }
 
 static void PXI_SendArray(const u32 *w, u32 c)
@@ -133,15 +116,11 @@ static void PXI_RecvArray(u32 *w, u32 c)
     if(c > PXI_FIFO_LEN) c = PXI_FIFO_LEN;
     while(c--)
 		*(w++) = PXI_Recv();
-    return;
 }
 
-static void PXI_DoCMD(u8 cmd, u32 *args, u32 argc)
+static u32 PXI_DoCMD(u8 cmd, const u32 *args, u32 argc)
 {
-    PXI_WaitRemote(PXI_READY);
+    PXI_Send(cmd);
     PXI_SendArray(args, argc);
-    PXI_SetRemote(cmd);
-    PXI_Sync();
-    PXI_WaitRemote(PXI_BUSY);
-    return;
+    return PXI_Recv();
 }

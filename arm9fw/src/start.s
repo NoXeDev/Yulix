@@ -79,5 +79,18 @@ __crt0__:
     sub r2, r0
     bl memcpy
 
-    b arm9fwmain
+    b wrap_main
 .pool
+
+wrap_main:
+    ldr r0, =__init_array_start
+    ldr r1, =__init_array_end
+    
+globals_init_loop:
+    cmp     r0,r1
+    it      lt
+    ldrlt   r2, [r0], #4
+    blxlt   r2
+    blt     globals_init_loop
+    
+    bl arm9fwmain

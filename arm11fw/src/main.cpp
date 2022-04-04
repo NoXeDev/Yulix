@@ -9,12 +9,14 @@ GPU *gpuManager;
 
 extern "C" void PXI_IRQHandler(void)
 {
-    u32 pxi_args[PXI_FIFO_LEN]  = {0};
-    u8 pxi_cmd;
+    u32 pxi_args[PXI_FIFO_LEN];
+    u32 pxi_cmd;
+    u32 ret = 0;
 
-    pxi_cmd = PXI_GetRemote();
+    pxi_cmd = PXI_Recv();
     switch (pxi_cmd) {
         default:
+            ret = 0xFFFFFFFF;
             break;
 
         case PXI_INIT_SCREEN:
@@ -69,20 +71,18 @@ extern "C" void PXI_IRQHandler(void)
             break;
         }
 
-        /*case PXI_TEST:
+        case PXI_TEST:
         {
-            PXI_RecvArray(pxi_args, 2);
+            PXI_RecvArray(pxi_args, 0);
             PXI_SetRemote(PXI_BUSY);
-
-            if(pxi_args[0] == 0xBABE && pxi_args[1] == 0xCAFE)
-            {
-                gpuManager->fillColor(true, 0x00F000, VRAM_FBS);
-            }
+            gpuManager->init(VRAM_FBS);
+            gpuManager->clear(VRAM_FBS);
+            gpuManager->fillColor(true, 0x00FF00, VRAM_FBS);
             break;
-        }*/
+        }
     }
 
-    PXI_SetRemote(PXI_READY);
+    PXI_Send(ret);
 }
 
 extern "C" void arm11fw_main(void)
@@ -92,8 +92,7 @@ extern "C" void arm11fw_main(void)
 
     *gpuManager = GPU();    // Init class
 
-    dic::setupIRQ(IRQ_PXI_SYNC, PXI_IRQHandler);
-    PXI_EnableIRQ();
+    dic::setupIRQ(IRQ_PXI_RX, PXI_IRQHandler);
     dic::enableCPUInterrupt();
 
     PXI_SetRemote(PXI_READY);

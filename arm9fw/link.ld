@@ -46,6 +46,11 @@ SECTIONS
         __data_lma = LOADADDR(.data);
         __data_s = ABSOLUTE(.);
 
+        __init_array_start = .;
+        *(.init_array)
+        *(.init_array.*)
+        __init_array_end = .;
+
         *(.data*)
         *(.rodata*)
 
