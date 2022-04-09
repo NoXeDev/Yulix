@@ -31,3 +31,9 @@ enum {
 #define I2C_ENABLE        (1u<<7)   // bit 7 : Start/busy
 #define I2C_GET_ACK(reg)  ((bool)((reg)>>4 & 1u))
 ///////////////////////////////////////
+
+
+// BUTTONS STUFF //////////////////////
+#define HID_PAD (*(vu32*)(0x10146000))
+#define BUTTON_A(pressed)    (!pressed << 0)
+#define BUTTON_B(pressed)    (!pressed << 1)

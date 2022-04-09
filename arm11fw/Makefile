@@ -9,7 +9,7 @@ INCLUDEDIR	:=	include
 
 INCLUDE		:=	-I$(SRCDIR) -I$(INCLUDEDIR) -I../common
 ARCHFLAGS	:=	-mcpu=mpcore -march=armv6k -mtune=mpcore -mfloat-abi=hard -marm -mno-thumb-interwork \
-	-ggdb -nostdlib -ffreestanding -nostartfiles -lgcc -flto
+	-ggdb -ffreestanding -lgcc -flto
 
 ASMFLAGS	:=	$(ARCHFLAGS) $(INCLUDE) -x assembler-with-cpp
 CFLAGS := $(ARCHFLAGS) $(INCLUDE) -MMD -MP -std=c++11 -Os -pipe -Wall -Wextra \

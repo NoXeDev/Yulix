@@ -47,6 +47,7 @@ __crt0__:
 .pool
 
 wrap_main:
+    bl __libc_init_array
     ldr r0, =__init_array_start
     ldr r1, =__init_array_end
     

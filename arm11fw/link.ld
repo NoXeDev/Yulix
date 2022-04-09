@@ -31,37 +31,101 @@ SECTIONS
         __vector_e = ABSOLUTE(.);
     } >INTVECTOR AT>AXIRAM
 
-    .text : ALIGN(16)
+    .text :
     {
-        __text_lma = LOADADDR(.text);
-        __text_s = ABSOLUTE(.);
-        *(.text*)
-        . = ALIGN(16);
-        __text_e = ABSOLUTE(.);
+        KEEP( *(.text.start) )
+        KEEP( *(.init) )
+
+        /* .text */
+        *(.text)
+        *(.text.*)
+        *(.glue_7)
+        *(.glue_7t)
+        *(.stub)
+        *(.gnu.warning)
+        *(.gnu.linkonce.t*)
+
+        /* .fini */
+        KEEP( *(.fini) )
+        . = ALIGN(32);
     } >AXIRAM
 
-    .data : ALIGN(16)
+    .rodata :
     {
-        __data_lma = LOADADDR(.data);
-        __data_s = ABSOLUTE(.);
-
-        __init_array_start = .;
-        *(.init_array)
-        *(.init_array.*)
-        __init_array_end = .;
-
-        *(.data*)
-        *(.rodata*)
-
-        . = ALIGN(16);
-        __data_e = ABSOLUTE(.);
+        *(.rodata)
+        *(.roda)
+        *(.rodata.*)
+        *all.rodata*(*)
+        *(.gnu.linkonce.r*)
+        SORT(CONSTRUCTORS)
+        . = ALIGN(8);
     } >AXIRAM
 
-    .bss (NOLOAD) : ALIGN(16)
+    .preinit_array :
     {
-        __bss_s = ABSOLUTE(.);
-        *(.bss*)
-        . = ALIGN(16);
-        __bss_e = ABSOLUTE(.);
+        PROVIDE (__preinit_array_start = .);
+        KEEP (*(.preinit_array))
+        PROVIDE (__preinit_array_end = .);
     } >AXIRAM
+
+    .init_array :
+    {
+        PROVIDE (__init_array_start = .);
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        PROVIDE (__init_array_end = .);
+    } >AXIRAM
+
+    .fini_array :
+    {
+        PROVIDE (__fini_array_start = .);
+        KEEP (*(.fini_array))
+        KEEP (*(SORT(.fini_array.*)))
+        PROVIDE (__fini_array_end = .);
+    } >AXIRAM
+
+    .ctors :
+    {
+        KEEP (*crtbegin.o(.ctors))
+        KEEP (*(EXCLUDE_FILE (*crtend.o) .ctors))
+        KEEP (*(SORT(.ctors.*)))
+        KEEP (*(.ctors))
+        . = ALIGN(4);
+    } >AXIRAM
+
+    .dtors :
+    {
+        KEEP (*crtbegin.o(.dtors))
+        KEEP (*(EXCLUDE_FILE (*crtend.o) .dtors))
+        KEEP (*(SORT(.dtors.*)))
+        KEEP (*(.dtors))
+        . = ALIGN(4);
+    } >AXIRAM
+
+    .ARM.extab : { *(.ARM.extab* .gnu.linkonce.armextab.*) __exidx_start = .;}
+    ARM.exidx : { *(.ARM.exidx* .gnu.linkonce.armexidx.*)  __exidx_end = .;}
+
+    .data :
+    {
+        *(.data)
+        *(.data.*)
+        *(.gnu.linkonce.d*)
+        CONSTRUCTORS
+        . = ALIGN(32);
+    } >AXIRAM
+
+    .bss (NOLOAD) :
+    {
+        . = ALIGN(32);
+        PROVIDE (__bss_s = ABSOLUTE(.));
+        *(.dynbss)
+        *(.bss)
+        *(.bss.*)
+        *(.gnu.linkonce.b*)
+        *(COMMON)
+        . = ALIGN(8);
+        PROVIDE (__bss_e = ABSOLUTE(.));
+    } :NONE
+
+    PROVIDE (__end__ = ABSOLUTE(.));
 }

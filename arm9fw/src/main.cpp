@@ -17,7 +17,14 @@ extern "C" void arm9fwmain()
 
     Screen::init();
 
-    Screen::fillcolor(TOP_AND_BOTTOM_SCREEN, 0xFFF000);
+    //Screen::fillcolor(TOP_AND_BOTTOM_SCREEN, 0xFFF000);
+    GFX::printStr(TOP_SCREEN, Vector2{10, 10}, 0x00FF00, "YulixCFW");
+    GFX::printStr(TOP_SCREEN, Vector2{10, 20}, 0x00FF00, "Ready to boot !");
+    
+    while(HID_PAD & BUTTON_A(false));
+
+    Screen::shutdown();
+    mcuManager.powerOff();
 
     while(true);
 }

@@ -13,4 +13,5 @@ class GPU
         static void swap();
         static void shutdownLcd();
         static void fillColor(bool isTop, u32 color, const FrameBuffers fbs[2]);
+        static bool getActiveFramebuffer();
 };

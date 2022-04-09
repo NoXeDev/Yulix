@@ -19,6 +19,7 @@ SECTIONS
     {
         __crt0_start = ABSOLUTE(.);
         KEEP(*(.crt0))
+        KEEP(*(.init))
         . = ALIGN(16);
     } >PRIVMEM
 
@@ -34,35 +35,92 @@ SECTIONS
 
     .text : ALIGN(16)
     {
-        __text_lma = LOADADDR(.text);
-        __text_s = ABSOLUTE(.);
-        *(.text*)
+        *(.text)
+        *(.text.*)
+        *(.glue_7)
+        *(.glue_7t)
+        *(.stub)
+        *(.gnu.warning)
+        *(.gnu.linkonce.t*)
+        KEEP( *(.fini) )
         . = ALIGN(16);
-        __text_e = ABSOLUTE(.);
     } >PRIVMEM
 
-    .data : ALIGN(16)
+    .rodata :
     {
-        __data_lma = LOADADDR(.data);
-        __data_s = ABSOLUTE(.);
-
-        __init_array_start = .;
-        *(.init_array)
-        *(.init_array.*)
-        __init_array_end = .;
-
-        *(.data*)
-        *(.rodata*)
-
-        . = ALIGN(16);
-        __data_e = ABSOLUTE(.);
+        *(.rodata)
+        *(.roda)
+        *(.rodata.*)
+        *all.rodata*(*)
+        *(.gnu.linkonce.r*)
+        SORT(CONSTRUCTORS)
+        . = ALIGN(8);
     } >PRIVMEM
 
-    .bss (NOLOAD) : ALIGN(16)
+    .preinit_array :
     {
-        __bss_s = ABSOLUTE(.);
-        *(.bss*)
-        . = ALIGN(16);
-        __bss_e = ABSOLUTE(.);
+        PROVIDE (__preinit_array_start = .);
+        KEEP (*(.preinit_array))
+        PROVIDE (__preinit_array_end = .);
     } >PRIVMEM
+
+    .init_array ALIGN(4) :
+    {
+        PROVIDE (__init_array_start = .);
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        PROVIDE (__init_array_end = .);
+    } >PRIVMEM
+
+    .fini_array ALIGN(4) :
+    {
+        PROVIDE (__fini_array_start = .);
+        KEEP (*(.fini_array))
+        KEEP (*(SORT(.fini_array.*)))
+        PROVIDE (__fini_array_end = .);
+    } >PRIVMEM
+
+    .ctors ALIGN(4) :
+    {
+        KEEP (*crtbegin.o(.ctors))
+        KEEP (*(EXCLUDE_FILE (*crtend.o) .ctors))
+        KEEP (*(SORT(.ctors.*)))
+        KEEP (*(.ctors))
+        . = ALIGN(4);
+    } >PRIVMEM
+
+    .dtors ALIGN(4) :
+    {
+        KEEP (*crtbegin.o(.dtors))
+        KEEP (*(EXCLUDE_FILE (*crtend.o) .dtors))
+        KEEP (*(SORT(.dtors.*)))
+        KEEP (*(.dtors))
+        . = ALIGN(4);
+    } >PRIVMEM
+
+    .ARM.extab : { *(.ARM.extab* .gnu.linkonce.armextab.*) __exidx_start = ABSOLUTE(.);} >PRIVMEM
+    ARM.exidx : { *(.ARM.exidx* .gnu.linkonce.armexidx.*)  __exidx_end = ABSOLUTE(.);} >PRIVMEM
+
+    .data :
+    {
+        *(.data)
+        *(.data.*)
+        CONSTRUCTORS
+        . = ALIGN(32);
+    } >PRIVMEM
+
+    .bss (NOLOAD) :
+    {
+        . = ALIGN(32);
+        PROVIDE (__bss_s = ABSOLUTE(.));
+        *(.dynbss)
+        *(.bss)
+        *(.bss.*)
+        *(.gnu.linkonce.b*)
+        *(COMMON)
+        . = ALIGN(32);
+        PROVIDE (__bss_e = ABSOLUTE(.));
+    } >PRIVMEM :NONE
+
+    __end__ = ABSOLUTE(.) ;
 }

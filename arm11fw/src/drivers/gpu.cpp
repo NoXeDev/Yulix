@@ -104,8 +104,8 @@ void GPU::clear(const FrameBuffers fbs[2])
 
 void GPU::swap()
 {
-    *GPU_REGS(0x78, true) = (*GPU_REGS(0x78, true) & 0xFFFFFFFE) | bufferIsAlternate;
-    *GPU_REGS(0x78, false) = (*GPU_REGS(0x78, false) & 0xFFFFFFFE) | bufferIsAlternate;
+    *GPU_REGS(0x78, true) = (*GPU_REGS(0x78, true) & 0xFFFFFFFE) | !bufferIsAlternate;
+    *GPU_REGS(0x78, false) = (*GPU_REGS(0x78, false) & 0xFFFFFFFE) | !bufferIsAlternate;
     bufferIsAlternate = !bufferIsAlternate;
 }
 
@@ -138,4 +138,9 @@ void GPU::fillColor(bool isTop, u32 color, const FrameBuffers fbs[2])
     REGs_PSC[3] = (1 << 8) | 1; //16-bit pattern; start
 
     while(!(REGs_PSC[3] & 2));
+}
+
+bool GPU::getActiveFramebuffer()
+{
+    return bufferIsAlternate;
 }

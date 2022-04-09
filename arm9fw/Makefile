@@ -1,22 +1,23 @@
 NAME		:=	$(shell basename $(CURDIR))
 
-CC			:=	arm-none-eabi-gcc
+CC			=	arm-none-eabi-gcc
+CXX			=	arm-none-eabi-g++
 OBJCOPY		:=	arm-none-eabi-objcopy
 
 SRCDIR		:=	src
 OUTDIR		:=	build
 INCLUDEDIR	:=	include
 
-INCLUDE		:=	-I$(SRCDIR) -I$(INCLUDEDIR) -I../common
+INCLUDE		:=	-I$(SRCDIR) -I$(INCLUDEDIR) -I../common -I../data
 ARCHFLAGS	:=	-mcpu=arm946e-s -mfloat-abi=soft -marm -mno-thumb-interwork \
-	-ggdb -nostdlib -ffreestanding -nostartfiles -lgcc -flto
+	-ggdb -ffreestanding -lgcc -flto
 
 ASMFLAGS	:=	$(ARCHFLAGS) $(INCLUDE) -x assembler-with-cpp
-CFLAGS := $(ARCHFLAGS) $(INCLUDE) -MMD -MP -std=c++11 -Os -pipe -Wall -Wextra \
+CFLAGS := $(ARCHFLAGS) $(INCLUDE) -MMD -MP -std=gnu++11 -Os -pipe -Wall -Wextra \
 			-Wno-unused-variable -Wno-unused-parameter -Wno-unused-function \
-			-ffunction-sections -fomit-frame-pointer -ffast-math -DARM9
+			-ffunction-sections -fomit-frame-pointer -ffast-math -DARM9 -fno-rtti -fno-exceptions
 
-LDFLAGS := -lstdc++ -Tlink.ld -Wl,--gc-sections,--nmagic,-z,max-page-size=4,-Map=output.map $(ARCHFLAGS)
+LDFLAGS := -lstdc++ -Tlink.ld -Wl,--gc-sections,--nmagic,-z,max-page-size=4,-Map=output.map $(ARCHFLAGS) 
 
 rwildcard = $(foreach d, $(wildcard $1*), \
             $(filter $(subst *, %, $2), $d) \
@@ -42,13 +43,13 @@ $(NAME).bin: $(NAME).elf
 $(NAME).elf: $(SOURCE_OUTPUT)
 	@echo === Linking ===
 	@mkdir -p "$(@D)"
-	@$(CC) $(LDFLAGS) $^ -o $@
+	@$(CXX) $(LDFLAGS) $^ -o $@
 
 # C compiling
 $(OUTDIR)/%.cpp.o: $(SRCDIR)/%.cpp
 	@mkdir -p "$(@D)"
 	@echo "  $<"
-	@$(CC) -c $(CFLAGS) -o $@ $<
+	@$(CXX) -c $(CFLAGS) -o $@ $<
 
 # Assembly compiling
 $(OUTDIR)/%.s.o: $(SRCDIR)/%.s

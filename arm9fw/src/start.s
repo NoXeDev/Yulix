@@ -79,6 +79,8 @@ __crt0__:
     sub r2, r0
     bl memcpy
 
+    bl __libc_init_array
+
     b wrap_main
 .pool
 
