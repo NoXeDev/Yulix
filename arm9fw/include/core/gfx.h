@@ -17,7 +17,7 @@ class Screen
 {
     public:
         static void init();
-        static void clear(bool clearAll);
+        static void clear(FrameBufferType framebfr);
         static void swap();
         static void shutdown();
         static void fillcolor(screens screenType, u32 color);
@@ -26,6 +26,6 @@ class Screen
 class GFX 
 {
     public:
-        static void putChar(screens screenCtx, u32 posX, u32 posY, u32 color, char data);
-        static u32 printStr(screens screenCtx, Vector2 positions, u32 color, const char *text);
+        static void putChar(screens screenCtx, bool currentFrameBufferState, FrameBufferType framebfr, u32 posX, u32 posY, u32 color, char data);
+        static u32 printStr(screens screenCtx, FrameBufferType framebfr, Vector2 positions, u32 color, const char *text);
 };

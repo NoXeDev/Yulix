@@ -8,18 +8,13 @@ void Screen::init()
     MCU tmpMcuController = MCU();
     tmpMcuController.backlightScreen(true);
     PXI_DoCMD(PXI_INIT_SCREEN, 0, 0);   // Tell to ARM11 to init screen
-    Screen::clear(true);
+    Screen::clear(ALL_FRAMEBUFFERS);
 }
 
-void Screen::clear(bool clearAll)
+void Screen::clear(FrameBufferType framebfr)
 {
-    PXI_DoCMD(PXI_CLEAR_SCREEN, 0, 0);
-    if(clearAll)
-    {
-        Screen::swap();
-        PXI_DoCMD(PXI_CLEAR_SCREEN, 0, 0);
-        Screen::swap();
-    }
+    u32 args[] = {(u32)framebfr};
+    PXI_DoCMD(PXI_CLEAR_SCREEN, args, 1);
 }
 
 void Screen::swap()
@@ -29,7 +24,7 @@ void Screen::swap()
 
 void Screen::shutdown()
 {
-    Screen::clear(true);
+    Screen::clear(ALL_FRAMEBUFFERS);
     PXI_DoCMD(PXI_SHUTDOWN_SCREEN, 0, 0);
     MCU tmpMcuController = MCU();
     tmpMcuController.backlightScreen(false);
@@ -41,17 +36,16 @@ void Screen::fillcolor(screens screenType, u32 color)
     PXI_DoCMD(PXI_FILL_COLOR, args, 2);
 }
 
-void GFX::putChar(screens screenCtx, u32 posX, u32 posY, u32 color, char data)
+void GFX::putChar(screens screenCtx, bool currentFrameBufferState, FrameBufferType framebfr, u32 posX, u32 posY, u32 color, char data)
 {
     // TOP_AND_BOTTOM_SCREEN have no impact here
     u8 *FrameBuffer;
-    bool isAltered = (bool)PXI_DoCMD(PXI_GET_ACTIVE_FRAMEBUFFER, 0, 0);
     if(screenCtx == TOP_SCREEN)
     {
-        FrameBuffer = VRAM_FBS[isAltered].top_left;
+        FrameBuffer = VRAM_FBS[(framebfr == CURRENT_FRAMEBUFFER ? currentFrameBufferState : !currentFrameBufferState)].top_left;
     } else 
     {
-        FrameBuffer = VRAM_FBS[isAltered].bottom;
+        FrameBuffer = VRAM_FBS[(framebfr == CURRENT_FRAMEBUFFER ? currentFrameBufferState : !currentFrameBufferState)].bottom;
     }
 
     for(u32 y = 0; y < 8; y++)
@@ -72,7 +66,7 @@ void GFX::putChar(screens screenCtx, u32 posX, u32 posY, u32 color, char data)
     }
 }
 
-u32 GFX::printStr(screens screenCtx, Vector2 positions, u32 color, const char *text)
+u32 GFX::printStr(screens screenCtx, FrameBufferType framebfr, Vector2 positions, u32 color, const char *text)
 {
     u32 line_i = 0;
     for(u32 i = 0; i < strlen(text); i++)
@@ -84,7 +78,7 @@ u32 GFX::printStr(screens screenCtx, Vector2 positions, u32 color, const char *t
             if(text[i] == ' ') break;
         }
 
-        GFX::putChar(screenCtx, (positions.x + line_i * SPACING_X), positions.y, color, text[i]);
+        GFX::putChar(screenCtx, (bool)PXI_DoCMD(PXI_GET_ACTIVE_FRAMEBUFFER, 0, 0), framebfr, (positions.x + line_i * SPACING_X), positions.y, color, text[i]);
 
         line_i++;
     }

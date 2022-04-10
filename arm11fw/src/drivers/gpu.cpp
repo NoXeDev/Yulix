@@ -83,9 +83,8 @@ void GPU::init(const FrameBuffers fbs[2])
     GPU::lcdFillBlack(false);
 }
 
-void GPU::clear(const FrameBuffers fbs[2])
+void GPU::clear(const FrameBuffers fb)
 {
-    FrameBuffers fb = (bufferIsAlternate ? fbs[1] : fbs[0]);
     vu32 *GPU_MEMORY_FILL_PSC0 = (vu32 *)0x10400010,
          *GPU_MEMORY_FILL_PSC1 = (vu32 *)0x10400020;
 

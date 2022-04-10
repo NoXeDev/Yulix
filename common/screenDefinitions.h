@@ -7,6 +7,13 @@ struct FrameBuffers {
     u8 *bottom;
 };
 
+enum FrameBufferType
+{
+    CURRENT_FRAMEBUFFER,
+    ALTERNATE_FRAMEBUFFER,
+    ALL_FRAMEBUFFERS
+};
+
 enum screens
 {
     TOP_SCREEN,

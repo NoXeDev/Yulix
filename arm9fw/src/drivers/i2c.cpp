@@ -81,3 +81,55 @@ bool I2C::i2cWriteRegister(u8 registerAddress, u8 data)
 
     return true;
 }
+
+u8 I2C::i2cReadRegister(u8 registerAddress)
+{
+    u32 maxErrRetry = 8;
+    while(maxErrRetry > 0)
+    {
+        i2cWait();
+
+        // Select the device
+        this->registers->REG_I2C_DATA = this->device.devAddress;
+        this->registers->REG_I2C_CNT = I2C_ENABLE | I2C_START;
+        i2cWait();
+        if(!I2C_GET_ACK(this->registers->REG_I2C_CNT))
+        {
+            this->registers->REG_I2C_CNT = I2C_ENABLE | I2C_PAUSE | I2C_STOP;
+            maxErrRetry--;
+            continue;
+        }
+
+        // Select the register and the data direction
+        this->registers->REG_I2C_DATA = registerAddress;
+        this->registers->REG_I2C_CNT = I2C_ENABLE | I2C_DATA_DIRECTION(I2C_WRITE_DIRECTION);
+        i2cWait();
+        if(!I2C_GET_ACK(this->registers->REG_I2C_CNT))
+        {
+            this->registers->REG_I2C_CNT = I2C_ENABLE | I2C_PAUSE | I2C_STOP;
+            maxErrRetry--;
+            continue;
+        }
+
+        this->registers->REG_I2C_DATA = this->device.devAddress | 1u; // bit 0 : read
+        this->registers->REG_I2C_CNT = I2C_ENABLE | I2C_START;
+        i2cWait();
+        if(!I2C_GET_ACK(this->registers->REG_I2C_CNT))
+        {
+            this->registers->REG_I2C_CNT = I2C_ENABLE | I2C_PAUSE | I2C_STOP;
+            maxErrRetry--;
+            continue;
+        }
+
+        break;
+    }
+
+    if(maxErrRetry == 0)
+        return 0xFF;
+
+    u8 out;
+    this->registers->REG_I2C_CNT = I2C_ENABLE | I2C_DATA_DIRECTION(I2C_READ_DIRECTION) | I2C_ACK;
+    i2cWait();
+    out = this->registers->REG_I2C_DATA;
+    return out;
+}

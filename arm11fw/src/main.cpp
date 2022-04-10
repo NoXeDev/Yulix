@@ -26,8 +26,15 @@ extern "C" void PXI_IRQHandler(void)
 
         case PXI_CLEAR_SCREEN:
         {
-            PXI_RecvArray(pxi_args, 0);
-            GPU::clear(VRAM_FBS);
+            PXI_RecvArray(pxi_args, 1);
+            FrameBufferType castedFrameBufferTypeArgument = (FrameBufferType)pxi_args[0];
+            if(castedFrameBufferTypeArgument == CURRENT_FRAMEBUFFER || castedFrameBufferTypeArgument == ALTERNATE_FRAMEBUFFER)
+            {
+                GPU::clear((castedFrameBufferTypeArgument == CURRENT_FRAMEBUFFER ? VRAM_FBS[GPU::getActiveFramebuffer()] : VRAM_FBS[!GPU::getActiveFramebuffer()]));
+            } else {
+                GPU::clear(VRAM_FBS[0]);
+                GPU::clear(VRAM_FBS[1]);
+            }
             break;
         }
 
@@ -75,7 +82,8 @@ extern "C" void PXI_IRQHandler(void)
         {
             PXI_RecvArray(pxi_args, 0);
             GPU::init(VRAM_FBS);
-            GPU::clear(VRAM_FBS);
+            GPU::clear(VRAM_FBS[0]);
+            GPU::clear(VRAM_FBS[1]);
             GPU::fillColor(true, 0x00FF00, VRAM_FBS);
             break;
         }
