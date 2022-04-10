@@ -9,11 +9,11 @@ OUTDIR		:=	build
 INCLUDEDIR	:=	include
 
 INCLUDE		:=	-I$(SRCDIR) -I$(INCLUDEDIR) -I../common -I../data
-ARCHFLAGS	:=	-mcpu=arm946e-s -mfloat-abi=soft -marm -mno-thumb-interwork \
+ARCHFLAGS	:=	-mcpu=arm946e-s -mfloat-abi=softfp -marm -mno-thumb-interwork \
 	-ggdb -ffreestanding -lgcc -flto
 
 ASMFLAGS	:=	$(ARCHFLAGS) $(INCLUDE) -x assembler-with-cpp
-CFLAGS := $(ARCHFLAGS) $(INCLUDE) -MMD -MP -std=gnu++11 -Os -pipe -Wall -Wextra \
+CFLAGS := $(ARCHFLAGS) $(INCLUDE) -MMD -MP -std=gnu++17 -Os -pipe -Wall -Wextra \
 			-Wno-unused-variable -Wno-unused-parameter -Wno-unused-function \
 			-ffunction-sections -fomit-frame-pointer -ffast-math -DARM9 -fno-rtti -fno-exceptions
 
