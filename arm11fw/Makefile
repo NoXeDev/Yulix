@@ -1,7 +1,7 @@
 NAME		:=	$(shell basename $(CURDIR))
 
-CC			:=	arm-none-eabi-gcc
-OBJCOPY		:=	arm-none-eabi-objcopy
+CC            =    $(DEVKITARM)/bin/arm-none-eabi-gcc
+OBJCOPY        =    $(DEVKITARM)/bin/arm-none-eabi-objcopy
 
 SRCDIR		:=	src
 OUTDIR		:=	build
