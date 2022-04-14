@@ -35,5 +35,23 @@ enum {
 
 // BUTTONS STUFF //////////////////////
 #define HID_PAD (*(vu32*)(0x10146000))
-#define BUTTON_A(pressed)    (!pressed << 0)
-#define BUTTON_B(pressed)    (!pressed << 1)
+#define BUTTON_A    (1 << 0)
+#define BUTTON_B    (1 << 1)
+
+// CRYPTO STUFF //////////////////////
+#define SHA_CNT         ((vu32 *)0x1000A000)
+#define SHA_BLKCNT      ((vu32 *)0x1000A004)
+#define SHA_HASH        ((vu32 *)0x1000A040)
+#define SHA_FIFO        ((vu32 *)0x1000A080)
+
+
+#define SHA_CNT_START   (1 << 0)
+#define SHA_CNT_FINAL_ROUND(bitState) (bitState << 1) // 1 = enable/busy ; 0 = normal
+#define SHA_CNT_INPUTDMA(enable) (enable << 2)
+#define SHA_CNT_OUTPUT_ENDIANESS(mode) (mode << 3) // 0 = little ; 1 = big
+#define SHA_256_MODE    (0 << 4)
+#define SHA_224_MODE    (1 << 4)
+
+// AES
+
+#define AES_CNT         ((vu32 *)0x10009000)

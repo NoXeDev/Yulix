@@ -58,9 +58,9 @@ void GFX::putChar(screens screenCtx, bool currentFrameBufferState, FrameBufferTy
                 u32 screenPos = (posX * SCREEN_HEIGHT * 3 + (SCREEN_HEIGHT - y - posY - 1) * 3) + x * 3 * SCREEN_HEIGHT;
 
                 // Write RGB font char according to screenPos calculation
-                FrameBuffer[screenPos] = color >> 16;
+                FrameBuffer[screenPos] = color;
                 FrameBuffer[screenPos + 1] = color >> 8;
-                FrameBuffer[screenPos + 2] = color;
+                FrameBuffer[screenPos + 2] = color >> 16;
             }
         }
     }

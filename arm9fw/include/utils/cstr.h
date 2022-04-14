@@ -1,6 +1,7 @@
 #pragma once
 #include <types.h>
 #include <type_traits>
+#include <string.h>
 
 char intTo_StrOut[128];
 template <typename t>
@@ -79,16 +80,20 @@ const char* float_to_str(float value, u8 decimalPlaces)
 
 char hexTo_StrOut[128];
 template <typename t>
-const char* to_hstring(t value)
+const char* to_hstring(t value, bool hex0X)
 {
     static_assert((std::is_same_v<t, u32> || std::is_same_v<t, u16> || std::is_same_v<t, u8>), "Type not supported now");
     t* valPtr = &value;
     u8* ptr;
     u8 tmp;
     u8 size;
-    u8 hexTypeOffset = 2;
-    hexTo_StrOut[0] = '0';
-    hexTo_StrOut[1] = 'x';
+    u8 hexTypeOffset = 0;
+    if(hex0X)
+    {
+        hexTypeOffset = 2;
+        hexTo_StrOut[0] = '0';
+        hexTo_StrOut[1] = 'x';
+    }
     if constexpr(std::is_same_v<t, u32>)
     {
         size = 4 * 2 - 1;
@@ -110,4 +115,21 @@ const char* to_hstring(t value)
     }
     hexTo_StrOut[size + 1 + hexTypeOffset] = 0;
     return hexTo_StrOut;
+}
+
+char u8To_StrOut[128];
+const char* u8_hstring(u8* datas, u8 size)
+{
+    if(size > 60) // for not do any potential char array overflow with a big array
+        return "OOB";
+    // Really unsafe !!!
+    const char* firstVal = to_hstring<u8>(datas[0], true);
+    u32 charArrayOffset = strlen(firstVal);
+    strcpy(u8To_StrOut, firstVal);
+    for(u8 i = 1; i < size; i++)
+    {
+        strcat(u8To_StrOut, to_hstring<u8>(datas[i], false));
+    }
+
+    return u8To_StrOut;
 }

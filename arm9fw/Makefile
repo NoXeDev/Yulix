@@ -13,9 +13,11 @@ ARCHFLAGS	:=	-mcpu=arm946e-s -mfloat-abi=softfp -marm -mno-thumb-interwork \
 	-ggdb -ffreestanding -lgcc -flto
 
 ASMFLAGS	:=	$(ARCHFLAGS) $(INCLUDE) -x assembler-with-cpp
-CFLAGS := $(ARCHFLAGS) $(INCLUDE) -MMD -MP -std=gnu++17 -Os -pipe -Wall -Wextra \
+CFLAGS := $(ARCHFLAGS) $(INCLUDE) -MMD -MP -Os -pipe -Wall -Wextra \
 			-Wno-unused-variable -Wno-unused-parameter -Wno-unused-function \
-			-ffunction-sections -fomit-frame-pointer -ffast-math -DARM9 -fno-rtti -fno-exceptions
+			-ffunction-sections -fomit-frame-pointer -ffast-math -DARM9
+
+CXXFLAGS := $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17
 
 LDFLAGS := -lstdc++ -Tlink.ld -Wl,--gc-sections,--nmagic,-z,max-page-size=4,-Map=output.map $(ARCHFLAGS) 
 
@@ -45,16 +47,16 @@ $(NAME).elf: $(SOURCE_OUTPUT)
 	@mkdir -p "$(@D)"
 	@$(CXX) $(LDFLAGS) $^ -o $@
 
-# C compiling
+# CPP compiling
 $(OUTDIR)/%.cpp.o: $(SRCDIR)/%.cpp
 	@mkdir -p "$(@D)"
 	@echo "  $<"
-	@$(CXX) -c $(CFLAGS) -o $@ $<
+	@$(CXX) -c $(CXXFLAGS) -o $@ $<
 
 # Assembly compiling
 $(OUTDIR)/%.s.o: $(SRCDIR)/%.s
 	@mkdir -p "$(@D)"
 	@echo "  $<"
-	@$(CC) -c $(ASMFLAGS) -o $@ $<
+	@$(CXX) -c $(ASMFLAGS) -o $@ $<
 
 include $(call rwildcard, $(OUTDIR), *.d)
