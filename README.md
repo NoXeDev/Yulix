@@ -17,4 +17,4 @@ Nop Yulix can't boot for the moment, but it will !
 
 
 #
-I'm really happy to be able to propose this project, it's a good opportunity for me to learn even more about hardware. If you are interested in the project or even in 3DS modding come and join me on my discord: https://discord.gg/NFPVppqcRs. Thanks you.
+I'm really happy to be able to propose this project, it's a good opportunity for me to learn even more about hardware.
