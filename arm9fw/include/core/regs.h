@@ -55,3 +55,38 @@ enum {
 // AES
 
 #define AES_CNT         ((vu32 *)0x10009000)
+#define AES_BLKCNT      ((vu32 *)0x10009004)
+#define AES_WRFIFO      ((vu32 *)0x10009008)
+#define AES_RDFIFO      ((vu32 *)0x1000900C)
+#define AES_KEYSEL      ((vu8 *)0x10009010)
+#define AES_KEYCNT      ((vu8 *)0x10009011)
+#define AES_CTR         ((vu32 *)0x10009020)
+#define AES_MAC         ((vu32 *)0x10009030)
+
+#define AES_KEY0        ((vu32 *)0x10009040)
+#define AES_KEY1        ((vu32 *)0x10009070)
+#define AES_KEY2        ((vu32 *)0x100090A0)
+#define AES_KEY3        ((vu32 *)0x100090D0)
+
+#define AES_KEYFIFO     ((vu32 *)0x10009100)
+#define AES_KEYXFIFO    ((vu32 *)0x10009104)
+#define AES_KEYYFIFO    ((vu32 *)0x10009108)
+
+#define AES_CCM_DECRYPT_MODE    (0u << 27)
+#define AES_CCM_ENCRYPT_MODE    (1u << 27)
+#define AES_CTR_MODE            (2u << 27)
+#define AES_CBC_DECRYPT_MODE    (4u << 27)
+#define AES_CBC_ENCRYPT_MODE    (5u << 27)
+#define AES_ECB_DECRYPT_MODE    (6u << 27)
+#define AES_ECB_ENCRYPT_MODE    (7u << 27)
+
+#define AES_CNT_START           (1 << 31)
+#define AES_CNT_INPUT_ORDER(op) (op << 25) // 1 = Normal / 0 = Reverse
+#define AES_CNT_OUTPUT_ORDER(op) (op << 24) // 1 = Normal / 0 = Reverse
+#define AES_CNT_INPUT_ENDIAN(op) (op << 23) // 1 = Big / 0 = Little
+#define AES_CNT_OUTPUT_ENDIAN(op) (op << 22) // 1 = Big / 0 = Little
+#define AES_CNT_FLUSH_READ      (1 << 11)
+#define AES_CNT_FLUSH_WRITE     (1 << 10)
+
+#define AES_KEYCNT_HW_TYPE(type)    (type << 6)
+#define AES_KEYCNT_ENABLE_FIFO_FLUSH      (1 << 7)

@@ -85,9 +85,9 @@ const char* to_hstring(t value, bool hex0X)
     static_assert((std::is_same_v<t, u32> || std::is_same_v<t, u16> || std::is_same_v<t, u8>), "Type not supported now");
     t* valPtr = &value;
     u8* ptr;
-    u8 tmp;
-    u8 size;
-    u8 hexTypeOffset = 0;
+    u32 tmp;
+    u32 size;
+    u32 hexTypeOffset = 0;
     if(hex0X)
     {
         hexTypeOffset = 2;
@@ -105,7 +105,7 @@ const char* to_hstring(t value, bool hex0X)
         size = 1 * 2 - 1;
     }
 
-    for(u8 i = 0; i < size; i++)
+    for(u32 i = 0; i < size; i++)
     {
         ptr = ((u8*)valPtr + i);
         tmp = ((*ptr & 0xF0) >> 4);

@@ -6,6 +6,19 @@
 #define SHA_224_HASH_SIZE   (224 / 8)
 #define SHA_1_HASH_SIZE     (160 / 8)
 
+enum AES_MODE {
+    CCM_MODE,
+    CTR_MODE,
+    CBC_MODE,
+    ECB_MODE
+};
+
+enum AES_OP
+{
+    AES_ENCRYPT,
+    AES_DECRYPT
+};
+
 class Sha
 {
     public:
@@ -19,7 +32,10 @@ class Sha
 class Aes
 {
     public:
-        Aes();
-        void encrypt();
-        void decrypt();
+        Aes(u8 keyslot, AES_MODE modeOfAes);
+        void process(void *dst, const void *src, void *iv, u32 blockCount, AES_OP operation, u32 ivMode);
+    private:
+        u8 keysolt;
+        u32 cryptoModeCfg;
+        AES_MODE modeOfAes;
 };

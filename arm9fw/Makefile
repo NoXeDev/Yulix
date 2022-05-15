@@ -17,7 +17,7 @@ CFLAGS := $(ARCHFLAGS) $(INCLUDE) -MMD -MP -Os -pipe -Wall -Wextra \
 			-Wno-unused-variable -Wno-unused-parameter -Wno-unused-function \
 			-ffunction-sections -fomit-frame-pointer -ffast-math -DARM9
 
-CXXFLAGS := $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17
+CXXFLAGS := $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17 -Wno-pointer-arith
 
 LDFLAGS := -lstdc++ -Tlink.ld -Wl,--gc-sections,--nmagic,-z,max-page-size=4,-Map=output.map $(ARCHFLAGS) 
 
